@@ -1,43 +1,94 @@
 import Link from 'next/link';
-import { getGraph } from '@/lib/content';
-import { ArrowRight, Gamepad2, Trophy, Blocks, GitBranch, Repeat } from 'lucide-react';
+import { ArrowRight, Gamepad2, Trophy, Blocks, GitBranch, Repeat, Cog, Database, Eye, Zap, Wifi, Network, RefreshCw, Clock, Scale, Circle } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 
 const iconMap: Record<string, any> = {
-    Gamepad2,
-    Trophy,
-    Blocks,
-    GitBranch,
-    Repeat,
+    Gamepad2, Trophy, Blocks, GitBranch, Repeat, Cog, Database, Eye, Zap, Wifi, Network, RefreshCw, Clock, Scale, Circle,
 };
 
-export function GraphView() {
-    const graph = getGraph();
+interface GraphViewProps {
+    graph: {
+        nodes: Array<{
+            id: string;
+            type: string;
+            title: string;
+            data: {
+                icon: string;
+                color: string;
+                genre?: string;
+                year?: string;
+            };
+        }>;
+        edges: Array<{
+            source: string;
+            target: string;
+            type: string;
+        }>;
+    };
+}
+
+const getNodeTypeLabel = (type: string) => {
+    const labels: Record<string, string> = {
+        root: '메인',
+        category: '카테고리',
+        case: '사례 연구',
+        fundamental: '기본 원리',
+        decision: '설계 결정',
+    };
+    return labels[type] || type;
+};
+
+export function GraphView({ graph }: GraphViewProps) {
+    // Group nodes by type
+    const nodesByType = graph.nodes.reduce((acc, node) => {
+        if (!acc[node.type]) acc[node.type] = [];
+        acc[node.type].push(node);
+        return acc;
+    }, {} as Record<string, typeof graph.nodes>);
+
+    // Order: root, category, case, fundamental, decision
+    const typeOrder = ['root', 'category', 'case', 'fundamental', 'decision'];
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
-            {graph.nodes.map((node) => {
-                const Icon = iconMap[node.data.icon] || Gamepad2;
+        <div className="space-y-12">
+            {typeOrder.map(type => {
+                const nodes = nodesByType[type];
+                if (!nodes || nodes.length === 0) return null;
+
                 return (
-                    <Link
-                        key={node.id}
-                        href={`/learn/${node.id}`}
-                        className={`block p-6 rounded-xl border-2 transition-all hover:shadow-lg hover:-translate-y-1
-              ${node.type === 'root' ? 'border-purple-200 bg-purple-50' :
-                                node.type === 'category' ? 'border-blue-200 bg-blue-50' :
-                                    'border-gray-200 bg-white'}`}
-                    >
-                        <div className="flex items-start justify-between mb-4">
-                            <div className={`p-3 rounded-lg ${node.type === 'root' ? 'bg-purple-100 text-purple-600' :
-                                    node.type === 'category' ? 'bg-blue-100 text-blue-600' :
-                                        'bg-gray-100 text-gray-600'
-                                }`}>
-                                <Icon size={24} />
-                            </div>
-                            <ArrowRight className="text-gray-400" size={20} />
+                    <section key={type} className="space-y-4">
+                        <div className="flex items-center gap-3">
+                            <h2 className="text-2xl font-bold">{getNodeTypeLabel(type)}</h2>
+                            <Badge variant="secondary">{nodes.length}</Badge>
                         </div>
-                        <h3 className="text-xl font-bold mb-2 text-gray-900">{node.title}</h3>
-                        <p className="text-sm text-gray-500 capitalize">{node.type}</p>
-                    </Link>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                            {nodes.map((node) => {
+                                const Icon = iconMap[node.data.icon] || Circle;
+                                return (
+                                    <Link key={node.id} href={`/learn/${node.id}`}>
+                                        <Card className="h-full transition-all hover:shadow-md hover:-translate-y-1 cursor-pointer">
+                                            <CardHeader>
+                                                <div className="flex items-start justify-between mb-2">
+                                                    <div className="p-2 rounded-lg bg-primary/10">
+                                                        <Icon className="h-5 w-5 text-primary" />
+                                                    </div>
+                                                    <ArrowRight className="h-4 w-4 text-muted-foreground" />
+                                                </div>
+                                                <CardTitle className="text-lg">{node.title}</CardTitle>
+                                                {node.data.genre && (
+                                                    <CardDescription>
+                                                        {node.data.genre} · {node.data.year}
+                                                    </CardDescription>
+                                                )}
+                                            </CardHeader>
+                                        </Card>
+                                    </Link>
+                                );
+                            })}
+                        </div>
+                    </section>
                 );
             })}
         </div>

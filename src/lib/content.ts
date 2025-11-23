@@ -10,6 +10,9 @@ const GRAPH_FILE = path.join(CONTENT_DIR, 'graph.yaml');
 export interface NodeData {
   icon: string;
   color: string;
+  genre?: string;
+  year?: string;
+  demoPath?: string;
 }
 
 export interface Node {
@@ -52,10 +55,10 @@ export function getContent(id: string): ContentFile | null {
   if (!fs.existsSync(filePath)) {
     return null;
   }
-  
+
   const fileContents = fs.readFileSync(filePath, 'utf8');
   const { content, data } = matter(fileContents);
-  
+
   return {
     id,
     content,
