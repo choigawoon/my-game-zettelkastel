@@ -1,0 +1,67 @@
+nodes:
+  - id: "main"
+    type: "root"
+    title: "Game Development Course"
+    data:
+      icon: "Gamepad2"
+      color: "purple"
+      
+  - id: "cases"
+    type: "category"
+    title: "Case Studies"
+    data:
+      icon: "Trophy"
+      color: "blue"
+      
+  - id: "fundamentals"
+    type: "category"
+    title: "Fundamentals"
+    data:
+      icon: "Blocks"
+      color: "green"
+      
+  - id: "decisions"
+    type: "category"
+    title: "Design Decisions"
+    data:
+      icon: "GitBranch"
+      color: "orange"
+      
+  - id: "game-loop"
+    type: "concept"
+    title: "The Game Loop"
+    data:
+      icon: "Repeat"
+      color: "blue"
+
+edges:
+  - source: "main"
+    target: "cases"
+    type: "structure"
+    
+  - source: "main"
+    target: "fundamentals"
+    type: "structure"
+    
+  - source: "main"
+    target: "decisions"
+    type: "structure"
+    
+  - source: "cases"
+    target: "fundamentals"
+    type: "related"
+    style: "dashed"
+    
+  - source: "cases"
+    target: "decisions"
+    type: "related"
+    style: "dashed"
+    
+  - source: "fundamentals"
+    target: "decisions"
+    type: "related"
+    style: "dashed"
+    
+  - source: "fundamentals"
+    target: "game-loop"
+    type: "part-of"

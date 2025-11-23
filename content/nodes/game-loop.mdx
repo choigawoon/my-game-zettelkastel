@@ -1,0 +1,24 @@
+---
+title: The Game Loop
+description: Understanding the core heartbeat of every game.
+---
+
+# The Game Loop
+
+The **Game Loop** is the central code of your game. It runs continuously during gameplay.
+
+## Key Phases
+
+1. **Process Input**: Handle user commands.
+2. **Update**: Advance game state.
+3. **Render**: Draw the game to the screen.
+
+```javascript
+while (gameRunning) {
+  processInput();
+  update();
+  render();
+}
+```
+
+This cycle repeats 60 times per second (usually).
